@@ -46,7 +46,7 @@ spec:
         - name: APP_NAME
           value: "container-concepts-demo"
         - name: SHUTDOWN_DELAY
-          value: "5"
+          value: "3"
         - name: UNREADY_ON_SHUTDOWN
           value: "true"
         # The time K8s/OpenShift will wait before sending SIGKILL
