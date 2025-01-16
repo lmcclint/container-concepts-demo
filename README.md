@@ -1,5 +1,10 @@
 # container-concepts-demo
 
+## Usage
+    oc apply -k https://github.com/lmcclint/container-concepts-demo/deploy
+
+Creates a 3 pod deployment in the namespace `container-concepts-demo` capable of demonstrating a number of container features
+
 ## Features
 
 ### Liveness & Readiness
@@ -19,7 +24,7 @@ Demonstrates how failing liveness triggers a pod restart, while failing readines
 
 Demonstrates how a pod can stop receiving new traffic while finishing inflight requests, or simulates various timeout conditions.
 
-    * Listens for SIGTERM (typical in K8s/OpenShift on pod shutdown).
+    * Listens for SIGTERM (typical signal on pod shutdown).
     * Logs both signal number and description (SIGTERM, SIGINT, etc.).
     * Waits a configurable number of seconds before fully exiting (via SHUTDOWN_DELAY env variable).
         Set SHUTDOWN_DELAY to -1 to simulate a stuck container that never completes shutdown (K8s eventually kills it after terminationGracePeriodSeconds).

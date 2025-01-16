@@ -22,6 +22,7 @@ var (
 // Environment-based variables
 var (
 	appName       = getEnv("APP_NAME", "container-concepts-demo")
+	hostname      string
 	shutdownDelay = getEnvAsInt("SHUTDOWN_DELAY", 3)
 	// UNREADY_ON_SHUTDOWN now defaults to true:
 	unreadyOnShutdown = getEnvAsBool("UNREADY_ON_SHUTDOWN", true)
@@ -176,20 +177,20 @@ func startHogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if hogging {
-		fmt.Fprintf(w, "Already hogging memory. Stop first or keep going.\n")
+		fmt.Fprintf(w, "Already hogging memory on pod %s. Stop first or keep going.\n", hostname)
 		return
 	}
 
 	startHog(mb)
-	fmt.Fprintf(w, "Started allocating %d MiB per second.\n", mb)
+	fmt.Fprintf(w, "Started allocating %d MiB per second on pod %s.\n", mb, hostname)
 }
 
 func stopHogHandler(w http.ResponseWriter, r *http.Request) {
 	if hogging {
 		stopHog()
-		fmt.Fprintf(w, "Stopped hogging memory.\n")
+		fmt.Fprintf(w, "Stopped hogging memory on pod %s.\n", hostname)
 	} else {
-		fmt.Fprintf(w, "Not currently hogging.\n")
+		fmt.Fprintf(w, "Not currently hogging on pod %s.\n", hostname)
 	}
 }
 
@@ -198,7 +199,7 @@ func resetHogHandler(w http.ResponseWriter, r *http.Request) {
 	memoryHog = nil
 	hogMu.Unlock()
 
-	fmt.Fprintln(w, "Memory allocations reset. (Chunks cleared.)")
+	fmt.Fprintf(w, "Memory allocations reset on pod %s. (Chunks cleared.)", hostname)
 }
 
 func oneShotHogHandler(w http.ResponseWriter, r *http.Request) {
@@ -223,7 +224,7 @@ func oneShotHogHandler(w http.ResponseWriter, r *http.Request) {
 	total := len(memoryHog)
 	hogMu.Unlock()
 
-	msg := fmt.Sprintf("Allocated %d MiB in one shot. Total chunks: %d\n", mb, total)
+	msg := fmt.Sprintf("Allocated %d MiB in one shot on pod %s. Total chunks: %d\n", mb, hostname, total)
 	log.Println(msg)
 	fmt.Fprint(w, msg)
 }
