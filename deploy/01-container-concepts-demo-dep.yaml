@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container-concepts-demo
+  namespace: container-concepts-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: container-concepts-demo
+  template:
+    metadata:
+      labels:
+        app: container-concepts-demo
+    spec:
+      containers:
+      - name: container-concepts-demo
+        image: quay.io/lmcclint/container-concepts-demo:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+        # Liveness probe - checks /healthz
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        # Readiness probe - checks /ready
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        # Set Requests
+        resources:
+          requests:
+            cpu: 1m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+        # Set environment variables
+        env:
+        - name: APP_NAME
+          value: "container-concepts-demo"
+        - name: SHUTDOWN_DELAY
+          value: "5"
+        - name: UNREADY_ON_SHUTDOWN
+          value: "true"
+        # The time K8s/OpenShift will wait before sending SIGKILL
+        terminationGracePeriodSeconds: 60
