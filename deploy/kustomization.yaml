@@ -1,0 +1,8 @@
+# deploy/kustomization.yaml
+
+namespace: container-concepts-demo
+
+resources:
+  - 01-container-concepts-demo-dep.yaml
+  - 02-container-concepts-demo-svc.yaml
+  - 03-container-concepts-demo-route.yaml
